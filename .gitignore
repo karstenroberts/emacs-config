@@ -2,3 +2,7 @@
 \#*#
 *~
 .cache/
+recentf
+.lsp-session-v1
+projects
+url/

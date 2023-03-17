@@ -11,37 +11,37 @@
   (package-install 'use-package))
 
 ;; set exec-path to PATH
-(defun
-	set-exec-path-from-shell-PATH () 
-  ;; Set up Emacs' `exec-path' and PATH environment variable to match 
-  ;; that used by the user's shell.
-  ;; 
-  ;; This is particularly useful under Mac OS X and macOS, where GUI
-  ;; apps are not started from a shell.
-  (interactive)
-  (let ((path-from-shell (replace-regexp-in-string
-						  "[ \t\n]*$" "" (shell-command-to-string
-										  "$SHELL --login -c 'echo $PATH'"
-										  ))))
-    (setenv "PATH" path-from-shell)
-    (setq exec-path (split-string path-from-shell path-separator))))
+;; (defun
+;; 	set-exec-path-from-shell-PATH () 
+;;   ;; Set up Emacs' `exec-path' and PATH environment variable to match 
+;;   ;; that used by the user's shell.
+;;   ;; 
+;;   ;; This is particularly useful under Mac OS X and macOS, where GUI
+;;   ;; apps are not started from a shell.
+;;   (interactive)
+;;   (let ((path-from-shell (replace-regexp-in-string
+;; 						  "[ \t\n]*$" "" (shell-command-to-string
+;; 										  "$SHELL --login -c 'echo $PATH'"
+;; 										  ))))
+;;     (setenv "PATH" path-from-shell)
+;;     (setq exec-path (split-string path-from-shell path-separator))))
 
-(set-exec-path-from-shell-PATH)
+;; (set-exec-path-from-shell-PATH)
 
-;; (exec-path-from-shell-initialize)
+(exec-path-from-shell-initialize)
 
-(require 'nvm)
-(defun do-nvm-use (version)
-  (interactive "sVersion: ")
-  (nvm-use version)
-  (exec-path-from-shell-copy-env "PATH"))
+;; (require 'nvm)
+;; (defun do-nvm-use (version)
+;;   (interactive "sVersion: ")
+;;   (nvm-use version)
+;;   (exec-path-from-shell-copy-env "PATH"))
 
-(defun run-node (cwd)
-  (interactive "DDirectory: ")
-  (unless (executable-find "node")
-	(call-interactively 'do-nvm-use))
-  (let ((default-directory cwd))
-	(pop-to-buffer (make-comint (format"node-repl-%s" cwd) "node" nil "--interactive"))))
+;; (defun run-node (cwd)
+;;   (interactive "DDirectory: ")
+;;   (unless (executable-find "node")
+;; 	(call-interactively 'do-nvm-use))
+;;   (let ((default-directory cwd))
+;; 	(pop-to-buffer (make-comint (format"node-repl-%s" cwd) "node" nil "--interactive"))))
 
 ;;;; My own Stuff
 (global-set-key (kbd "C-;") 'comment-or-uncomment-region)
@@ -61,7 +61,7 @@
            (insert (current-kill 0)))))
 
 (require 'shell-here)
-(define-key (current-global-map) "\C-c!" 'shell-here)
+(define-key (current-global-map) "\C-c !" 'shell-here)
 
 ;; Bind to key
 (global-set-key (kbd "C-c e") 'eval-and-replace)
@@ -318,7 +318,7 @@ buffer in current window."
 (require 'neotree)
 
 (global-set-key [f8] 'neotree-toggle)
-(setq neo-window-width 40)
+(setq neo-window-width 30)
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 (setq neo-smart-open t)
 
@@ -387,6 +387,11 @@ buffer in current window."
 (setq lsp-ui-sideline-show-diagnostics t)
 (setq lsp-ui-sideline-show-hover t)
 (setq lsp-ui-sideline-show-code-actions t)
+(setq lsp-ui-sideline-diagnostic-max-lines 3)
+(setq lsp-ui-sideline-delay .5)
+(setq lsp-ui-doc-enable t)
+(setq lsp-ui-doc-delay 5)
+(setq lsp-ui-doc-show-with-cursor t)
 
 (use-package lsp-mode
   :ensure t
@@ -397,7 +402,8 @@ buffer in current window."
 
 (use-package lsp-ui
   :ensure t
-  :commands lsp-ui-mode)
+  :commands lsp-ui-mode
+  :bind (("C-c z" . lsp-ui-doc-focus-frame)))
 
 (defun enable-minor-mode (my-pair)
   (if (buffer-file-name)
