@@ -124,11 +124,6 @@ buffer in current window."
 ;; Shows columns beside row number at the bottom
 (setq column-number-mode t)
 
-;; add pug mode
-(use-package pug-mode
-  :mode ("\\.pug\\'" . pug-mode)
-)
-
 (use-package multiple-cursors
   :ensure t
   :bind (("C-." . mc/mark-next-like-this)
@@ -182,14 +177,14 @@ buffer in current window."
   :ensure t
   )
 
-(use-package ivy
-  :config
-  (ivy-mode 1)
-  (define-key ivy-minibuffer-map (kbd "C-n") 'ivy-next-line)
-  (define-key ivy-minibuffer-map (kbd "C-p") 'ivy-previous-line)
-  (define-key ivy-minibuffer-map (kbd "C-f") 'ivy-insert-current)
-  (define-key ivy-minibuffer-map (kbd "C-h") 'ivy-immediate-done)
-  :ensure t)
+;; (use-package ivy
+;;   :config
+;;   (ivy-mode 1)
+;;   (define-key ivy-minibuffer-map (kbd "C-n") 'ivy-next-line)
+;;   (define-key ivy-minibuffer-map (kbd "C-p") 'ivy-previous-line)
+;;   (define-key ivy-minibuffer-map (kbd "C-f") 'ivy-insert-current)
+;;   (define-key ivy-minibuffer-map (kbd "C-h") 'ivy-immediate-done)
+;;   :ensure t)
 
 (use-package swiper
   :config
@@ -392,6 +387,21 @@ buffer in current window."
 (setq lsp-ui-doc-enable t)
 (setq lsp-ui-doc-delay 5)
 (setq lsp-ui-doc-show-with-cursor t)
+(setq lsp-javascript-auto-closing-tags t)
+(setq lsp-javascript-display-parameter-name-hints t)
+(setq lsp-javascript-display-parameter-type-hints t)
+(setq lsp-javascript-format-insert-space-after-opening-and-before-closing-empty-braces t)
+(setq lsp-javascript-format-insert-space-after-opening-and-before-closing-nonempty-brackets t)
+(setq lsp-javascript-format-insert-space-after-opening-and-before-closing-nonempty-parenthesis t)
+(setq lsp-javascript-suggest-complete-function-calls t)
+(setq lsp-typescript-auto-closing-tags t)
+(setq lsp-typescript-display-parameter-name-hints t)
+(setq lsp-typescript-display-parameter-type-hints t)
+(setq lsp-typescript-format-insert-space-after-opening-and-before-closing-empty-braces t)
+(setq lsp-typescript-format-insert-space-after-opening-and-before-closing-nonempty-brackets t)
+(setq lsp-typescript-format-insert-space-after-opening-and-before-closing-nonempty-parenthesis t)
+(setq lsp-typescript-suggest-complete-function-calls t)
+
 
 (use-package lsp-mode
   :ensure t
