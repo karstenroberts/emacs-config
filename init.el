@@ -28,8 +28,6 @@
 
 ;; (set-exec-path-from-shell-PATH)
 
-(exec-path-from-shell-initialize)
-
 ;; (require 'nvm)
 ;; (defun do-nvm-use (version)
 ;;   (interactive "sVersion: ")
@@ -42,6 +40,8 @@
 ;; 	(call-interactively 'do-nvm-use))
 ;;   (let ((default-directory cwd))
 ;; 	(pop-to-buffer (make-comint (format"node-repl-%s" cwd) "node" nil "--interactive"))))
+
+(setq-default indent-tabs-mode nil)
 
 ;;;; My own Stuff
 (global-set-key (kbd "C-;") 'comment-or-uncomment-region)
@@ -171,20 +171,15 @@ buffer in current window."
             (setq js-indent-level 2)))
 
 ;; Stuff from Sahiil
-(use-package avy
-  :config
-  (global-set-key (kbd "C-c C-j") 'avy-goto-word-1)
-  :ensure t
-  )
 
-;; (use-package ivy
-;;   :config
-;;   (ivy-mode 1)
-;;   (define-key ivy-minibuffer-map (kbd "C-n") 'ivy-next-line)
-;;   (define-key ivy-minibuffer-map (kbd "C-p") 'ivy-previous-line)
-;;   (define-key ivy-minibuffer-map (kbd "C-f") 'ivy-insert-current)
-;;   (define-key ivy-minibuffer-map (kbd "C-h") 'ivy-immediate-done)
-;;   :ensure t)
+(use-package ivy
+  :config
+  (ivy-mode 1)
+  (define-key ivy-minibuffer-map (kbd "C-n") 'ivy-next-line)
+  (define-key ivy-minibuffer-map (kbd "C-p") 'ivy-previous-line)
+  (define-key ivy-minibuffer-map (kbd "C-f") 'ivy-insert-current)
+  (define-key ivy-minibuffer-map (kbd "C-h") 'ivy-immediate-done)
+  :ensure t)
 
 (use-package swiper
   :config
@@ -301,7 +296,7 @@ buffer in current window."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(solarized-dark modus-themes modus-operandi-theme projectile which-key helm-xref lsp-ivy helm-lsp lsp-treemacs lsp-ui lsp-mode nvm exec-path-from-shell solarized-theme ssh-agency eldoc all-the-icons neotree prettier-js tide web-mode typescript-mode rjsx-mode pug-mode shell-here company-irony magit json-mode multiple-cursors elpy undo-tree org-plus-contrib zenburn-theme use-package package-build counsel company avy)))
+   '(treemacs-magit lsp-ivy lsp-treemacs lsp-ui lsp-mode solarized-dark modus-themes modus-operandi-theme projectile which-key nvm exec-path-from-shell solarized-theme ssh-agency eldoc all-the-icons prettier-js tide web-mode typescript-mode rjsx-mode pug-mode shell-here company-irony magit json-mode multiple-cursors elpy undo-tree org-plus-contrib zenburn-theme use-package package-build counsel company)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -309,16 +304,15 @@ buffer in current window."
  ;; If there is more than one, they won't work right.
  )
 
-(require 'all-the-icons)
-(require 'neotree)
+;; (require 'all-the-icons)
+;; (require 'neotree)
+;; (global-set-key [f8] 'neotree-toggle)
+;; (setq neo-window-width 30)
+;; (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+;; (setq neo-smart-open t)
 
-(global-set-key [f8] 'neotree-toggle)
-(setq neo-window-width 30)
-(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-(setq neo-smart-open t)
-
-(with-eval-after-load 'neotree
-  (define-key neotree-mode-map (kbd "D") 'neotree-change-root))
+;; (with-eval-after-load 'neotree
+;;   (define-key neotree-mode-map (kbd "D") 'neotree-change-root))
 
 ;; Configure ssh agent
 (require 'ssh-agency)
@@ -327,14 +321,10 @@ buffer in current window."
 
 ;; JS CONFIG
 
-;; IDO
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
-
 ;; Built-in project package
 (require 'project)
 (global-set-key (kbd "C-x C-g") #'project-find-file)
+(global-set-key (kbd "C-x C-\'") #'project-find-regexp)
 
 ;; General Settings
 (delete-selection-mode t)
@@ -371,22 +361,22 @@ buffer in current window."
 		 ("\\.html\\'" . web-mode))
   :commands web-mode)
 
-;; (use-package modus-themes
-;;   :ensure t
-;;   :config (load-theme 'modus-operandi t))
+
+
+
+(use-package lsp-mode
+  :ensure t
+  :hook (
+		 (web-mode . lsp-deferred)
+		 (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp-deferred)
 
 ;; lsp-mode
 (setq lsp-log-io nil) ;; Don't log everything = speed
 (setq lsp-keymap-prefix "C-c l")
 (setq lsp-restart 'auto-restart)
-(setq lsp-ui-sideline-show-diagnostics t)
-(setq lsp-ui-sideline-show-hover t)
-(setq lsp-ui-sideline-show-code-actions t)
-(setq lsp-ui-sideline-diagnostic-max-lines 3)
-(setq lsp-ui-sideline-delay .5)
-(setq lsp-ui-doc-enable t)
-(setq lsp-ui-doc-delay 5)
-(setq lsp-ui-doc-show-with-cursor t)
+
+;; ts-js server
 (setq lsp-javascript-auto-closing-tags t)
 (setq lsp-javascript-display-parameter-name-hints t)
 (setq lsp-javascript-display-parameter-type-hints t)
@@ -402,18 +392,20 @@ buffer in current window."
 (setq lsp-typescript-format-insert-space-after-opening-and-before-closing-nonempty-parenthesis t)
 (setq lsp-typescript-suggest-complete-function-calls t)
 
-
-(use-package lsp-mode
-  :ensure t
-  :hook (
-		 (web-mode . lsp-deferred)
-		 (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp-deferred)
+(setq lsp-treemacs-sync-mode 1)
 
 (use-package lsp-ui
   :ensure t
   :commands lsp-ui-mode
   :bind (("C-c z" . lsp-ui-doc-focus-frame)))
+(setq lsp-ui-sideline-show-diagnostics t)
+(setq lsp-ui-sideline-show-hover t)
+(setq lsp-ui-sideline-show-code-actions t)
+(setq lsp-ui-sideline-diagnostic-max-lines 3)
+(setq lsp-ui-sideline-delay .5)
+(setq lsp-ui-doc-enable t)
+(setq lsp-ui-doc-delay 5)
+(setq lsp-ui-doc-show-with-cursor t)
 
 (defun enable-minor-mode (my-pair)
   (if (buffer-file-name)
@@ -427,6 +419,43 @@ buffer in current window."
 							  '("\\.jsx?\\'" . prettier-js-mode))
 							 (enable-minor-mode
 							  '("\\.tsx?\\'" . prettier-js-mode))))
+
+
+
+(use-package treemacs
+  :ensure t
+  :bind
+  (:map global-map
+		([f8] . treemacs)
+		("C-<f8>" . treemacs-select-window))
+  :config
+  (setq treemacs-collapse-dirs 0)
+  (setq treemacs-file-event-delay 100)
+  (setq treemacs-follow-mode t)
+  (setq treemacs-deferred-git-apply-delay 0.5)
+  (setq treemacs-width 45)
+  (pcase (cons (not (null (executable-find "git")))
+			   (not (null treemacs-python-executable)))
+	(`(t . t)
+	 (treemacs-git-mode 'simple))
+	(`(t . _)
+	 (treemacs-git-mode 'simple)))
+  (treemacs-hide-gitignored-files-mode nil)
+  )
+
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
+
+
+
+
+
+
+
+
 
 ;; (helm-mode)
 ;; (require 'helm-xref)
